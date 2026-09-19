@@ -9,3 +9,7 @@ Design: an original pixel farming valley behind a warm wooden-framed journal. Pa
 Motion: directional page changes; staggered card entrances; gently shifting environment, sunbeams, fireflies and pointer parallax; one short constellation celebration on the final page. Single pause control, reduced-motion support, visibility pause, bounded particle count, no audio or remote trackers.
 
 Validate every desktop and mobile slide, rapid navigation, direct links, disabled boundary controls, fullscreen, pause persistence, reduced motion, no runtime errors, printable pages, and public HTTPS assets. Back up the existing server directory before replacing static assets. Do not modify unrelated Caddy routes.
+
+## Copy revision, September 19
+
+Rewrite the visible text as a short classroom speech. Remove slogans, gardening metaphors, invented first-month timelines and repeated promises. Reduce seven pages to five: introduction, motivation, working approach, proposed tasks, closing. Keep the pixel art, lighting and navigation. Do not invent grades, awards, experience, or proven personal traits; use concrete future actions. Update the slide-count checks and final-page animation trigger, then verify text layout and online behavior. Keep the old deployment as a rollback copy.

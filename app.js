@@ -2,8 +2,8 @@
 const profile = { name: '宋如一', className: '' };
 const $ = (selector) => document.querySelector(selector);
 const slides = [...document.querySelectorAll('.slide')];
-const labels = ['初见', '初心', '连接', '态度', '行动', '日历', '同行'];
-const sceneLabels = { morning: ['☀', '春日 · 晨光', '一段共同成长的旅程'], afternoon: ['☀', '午后 · 晴朗', '把每一件小事，认真做好'], golden: ['◒', '黄昏 · 暖阳', '让每一份用心，慢慢生长'], night: ['☾', '星夜 · 同行', '灯火与星光，都为同行的人'] };
+const labels = ['介绍', '理由', '做事', '工作', '致谢'];
+const sceneLabels = { morning: ['☀', '春日 · 晨光', '晨间光影'], afternoon: ['☀', '午后 · 晴朗', '午后光影'], golden: ['◒', '黄昏 · 暖阳', '黄昏光影'], night: ['☾', '星夜 · 晴朗', '夜间光影'] };
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let preferredMotion = true;
 try { preferredMotion = localStorage.getItem('valley-motion') !== 'off'; } catch { /* Private mode still works. */ }
@@ -90,7 +90,7 @@ function go(index, updateHash = true) {
   $('#prev').disabled = current === 0;
   $('#next').disabled = current === slides.length - 1;
   setScene();
-  if (current === 6 && motionEnabled) celebrate();
+  if (current === slides.length - 1 && motionEnabled) celebrate();
   if (updateHash) {
     try { history.replaceState(null, '', `#${current + 1}`); } catch { /* Supports offline file:// use. */ }
   }

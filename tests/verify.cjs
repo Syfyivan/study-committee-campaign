@@ -16,7 +16,7 @@ const output = process.env.SCREENSHOT_DIR;
     if (output) fs.mkdirSync(output, { recursive: true });
     await page.goto(base);
     await page.evaluate(() => document.fonts.ready);
-    assert.equal(await page.locator('.slide').count(), 7);
+    assert.equal(await page.locator('.slide').count(), 5);
     assert.ok((await page.locator('body').innerText()).includes('宋如一'));
     assert.ok(!(await page.content()).includes('宋一凡'));
     assert.equal(await page.locator('#motion').getAttribute('aria-pressed'), 'false');
@@ -24,9 +24,9 @@ const output = process.env.SCREENSHOT_DIR;
     for (const [width, height] of [[1366,768], [1280,720], [1920,1080], [768,1024], [390,844], [320,740]]) {
       await page.setViewportSize({ width, height });
       await page.keyboard.press('Home');
-      for (let i = 1; i <= 7; i++) {
+      for (let i = 1; i <= 5; i++) {
         assert.equal(await page.locator('.slide.active').count(), 1);
-        assert.equal(await page.locator('#counter').textContent(), `${String(i).padStart(2, '0')} / 07`);
+        assert.equal(await page.locator('#counter').textContent(), `${String(i).padStart(2, '0')} / 05`);
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, `horizontal overflow at ${width}, slide ${i}`);
         const clipped = await page.locator('.slide.active').evaluate(slide => {
           const rect = slide.getBoundingClientRect();
@@ -43,18 +43,19 @@ const output = process.env.SCREENSHOT_DIR;
       assert.equal(await page.locator('#next').isDisabled(), true);
     }
     await page.goto(`${base}#5`);
-    assert.equal(await page.locator('#counter').textContent(), '05 / 07');
+    assert.equal(await page.locator('#counter').textContent(), '05 / 05');
     await page.locator('#dots button').first().click();
-    assert.equal(await page.locator('#counter').textContent(), '01 / 07');
+    assert.equal(await page.locator('#counter').textContent(), '01 / 05');
     await page.locator('#deck').evaluate(el => {
       const start = new Touch({ identifier: 1, target: el, clientX: 270, clientY: 200 });
       const end = new Touch({ identifier: 1, target: el, clientX: 60, clientY: 205 });
       el.dispatchEvent(new TouchEvent('touchstart', { touches: [start], changedTouches: [start] }));
       el.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [end] }));
     });
-    assert.equal(await page.locator('#counter').textContent(), '02 / 07');
+    assert.equal(await page.locator('#counter').textContent(), '02 / 05');
     await page.setViewportSize({ width: 1366, height: 768 });
     await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.waitForFunction(() => document.querySelector('#motion').getAttribute('aria-pressed') === 'true');
     assert.equal(await page.locator('#motion').getAttribute('aria-pressed'), 'true');
     await page.locator('#lighting').click();
     assert.equal(await page.locator('body').getAttribute('data-scene'), 'night');
@@ -65,7 +66,7 @@ const output = process.env.SCREENSHOT_DIR;
     await page.waitForTimeout(850);
     assert.equal(await page.locator('.slide.active').count(), 1);
     assert.equal(await page.locator('.leaving').count(), 0);
-    assert.equal(await page.locator('#counter').textContent(), '07 / 07');
+    assert.equal(await page.locator('#counter').textContent(), '05 / 05');
     await page.locator('#motion').click();
     assert.equal(await page.locator('#motion').getAttribute('aria-pressed'), 'false');
     assert.equal(await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length), 0);
@@ -78,8 +79,8 @@ const output = process.env.SCREENSHOT_DIR;
     await page.keyboard.press('f');
     assert.equal(await page.evaluate(() => Boolean(document.fullscreenElement)), false);
     await page.emulateMedia({ media: 'print', reducedMotion: 'reduce' });
-    assert.equal(await page.locator('.slide:visible').count(), 7);
+    assert.equal(await page.locator('.slide:visible').count(), 5);
     assert.deepEqual(errors, []);
-    console.log('PASS: seven slides at six viewport sizes, no clipped text, name, font/assets, keyboard, touch, hashes, rapid transitions, daylight toggle, pause persistence, reduced motion, fullscreen, print visibility, no runtime/HTTP errors.');
+    console.log('PASS: five slides at six viewport sizes, no clipped text, name, font/assets, keyboard, touch, hashes, rapid transitions, daylight toggle, pause persistence, reduced motion, fullscreen, print visibility, no runtime/HTTP errors.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
