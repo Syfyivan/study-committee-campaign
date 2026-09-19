@@ -12,6 +12,7 @@ let current = -1;
 let manualScene = null;
 let leavingTimer;
 let pageAnimations = [];
+let layoutFrame = 0;
 let particleFrame = 0;
 let lastFrame = 0;
 let elapsed = 0;
@@ -34,6 +35,10 @@ document.querySelectorAll('[data-profile]').forEach((el) => {
   if (profile[key]) el.textContent = key === 'className' ? `班级：${profile[key]}` : profile[key];
 });
 slides.forEach((slide, i) => {
+  const stage = document.createElement('div');
+  stage.className = 'slide-stage';
+  slide.before(stage);
+  stage.append(slide);
   slide.querySelectorAll('.reveal').forEach((el, j) => el.style.setProperty('--stagger', Math.min(j, 5)));
   const button = document.createElement('button');
   button.textContent = labels[i];
@@ -55,6 +60,43 @@ function setScene() {
   $('#lighting').title = scene === 'night' ? '切换日间光影' : '切换夜间光影';
 }
 
+function fitCurrentSlide() {
+  layoutFrame = 0;
+  if (current < 0 || matchMedia('print').matches) return;
+  const slide = slides[current];
+  const stage = slide.parentElement;
+  const pages = $('.pages');
+  const availableWidth = pages.clientWidth;
+  const availableHeight = pages.clientHeight;
+  if (!availableWidth || !availableHeight) return;
+  slide.classList.add('fit-measuring');
+  // Responsive layouts do the main work. Scale only when an unusually small
+  // window still cannot contain the complete page; never crop the content.
+  const fits = (scale) => {
+    stage.style.width = `${availableWidth / scale}px`;
+    stage.style.height = `${availableHeight / scale}px`;
+    return slide.scrollHeight <= stage.clientHeight + 1 && slide.scrollWidth <= stage.clientWidth + 1;
+  };
+  let scale = 1;
+  if (!fits(1)) {
+    let low = .25, high = 1;
+    for (let i = 0; i < 9; i++) {
+      const candidate = (low + high) / 2;
+      if (fits(candidate)) low = candidate;
+      else high = candidate;
+    }
+    scale = low;
+    fits(scale);
+  }
+  stage.style.transform = `scale(${scale})`;
+  stage.dataset.scale = scale.toFixed(3);
+  slide.classList.remove('fit-measuring');
+}
+
+function scheduleLayout() {
+  if (!layoutFrame) layoutFrame = requestAnimationFrame(fitCurrentSlide);
+}
+
 function go(index, updateHash = true) {
   const target = Math.max(0, Math.min(slides.length - 1, index));
   if (target === current) return;
@@ -70,6 +112,7 @@ function go(index, updateHash = true) {
     slide.setAttribute('aria-hidden', String(i !== current));
     slide.inert = i !== current;
   });
+  fitCurrentSlide();
   if (motionEnabled && previous >= 0 && typeof slides[current].animate === 'function') {
     const oldSlide = slides[previous];
     oldSlide.classList.add('leaving');
@@ -236,6 +279,9 @@ $('#deck').addEventListener('touchend', (event) => {
 $('#deck').addEventListener('touchcancel', () => { touchStart = null; }, { passive: true });
 window.addEventListener('pointermove', (event) => { if (event.pointerType === 'mouse' && motionEnabled) { pointerX = event.clientX / width; pointerY = event.clientY / height; } }, { passive: true });
 window.addEventListener('resize', resizeCanvas);
+new ResizeObserver(scheduleLayout).observe($('.pages'));
+document.fonts.ready.then(scheduleLayout);
+window.addEventListener('afterprint', scheduleLayout);
 window.addEventListener('hashchange', fromHash);
 document.addEventListener('visibilitychange', syncMotion);
 reducedMotion.addEventListener('change', syncMotion);

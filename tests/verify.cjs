@@ -16,13 +16,15 @@ const output = process.env.SCREENSHOT_DIR;
     if (output) fs.mkdirSync(output, { recursive: true });
     await page.goto(base);
     await page.evaluate(() => document.fonts.ready);
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     assert.equal(await page.locator('.slide').count(), 5);
     assert.ok((await page.locator('body').innerText()).includes('宋如一'));
     assert.ok(!(await page.content()).includes('宋一凡'));
     assert.equal(await page.locator('#motion').getAttribute('aria-pressed'), 'false');
     assert.equal(await page.locator('#prev').isDisabled(), true);
-    for (const [width, height] of [[1366,768], [1280,720], [1920,1080], [768,1024], [390,844], [320,740]]) {
+    for (const [width, height] of [[1366,768], [1280,720], [1920,1080], [800,600], [600,700], [768,1024], [390,844], [360,640], [320,568]]) {
       await page.setViewportSize({ width, height });
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       await page.keyboard.press('Home');
       for (let i = 1; i <= 5; i++) {
         assert.equal(await page.locator('.slide.active').count(), 1);
@@ -36,8 +38,15 @@ const output = process.env.SCREENSHOT_DIR;
           }).map(el => el.textContent.slice(0, 25));
         });
         assert.deepEqual(clipped, [], `clipped text at ${width}, slide ${i}`);
-        if (width >= 1280) assert.equal(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 3), true, `desktop vertical overflow slide ${i} at ${width}`);
-        if (output && [1366,390].includes(width)) await page.screenshot({ path: path.join(output, `${width}-${i}.png`), fullPage: true });
+        assert.equal(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 1), true, `page scrolls on slide ${i} at ${width}x${height}`);
+        assert.equal(await page.locator('.slide.active').evaluate(el => el.scrollHeight <= el.clientHeight + 1 && el.scrollWidth <= el.clientWidth + 1), true, `content clipped on slide ${i} at ${width}x${height}`);
+        assert.equal(await page.locator('.controls').evaluate(el => el.getBoundingClientRect().bottom <= innerHeight), true, 'navigation outside viewport');
+        const outsideViewport = await page.evaluate(() => [...document.querySelectorAll('.topbar,.journal,.pages,.controls,.tools button,.controls button')].filter(el => {
+          const r = el.getBoundingClientRect();
+          return r.width > 0 && (r.left < -1 || r.right > innerWidth + 1 || r.top < -1 || r.bottom > innerHeight + 1);
+        }).map(el => el.className));
+        assert.deepEqual(outsideViewport, [], `interface outside viewport at ${width}x${height}`);
+        if (output && [1366,800,390,320].includes(width)) await page.screenshot({ path: path.join(output, `${width}-${i}.png`), fullPage: true });
         await page.keyboard.press('ArrowRight');
       }
       assert.equal(await page.locator('#next').isDisabled(), true);
@@ -81,6 +90,6 @@ const output = process.env.SCREENSHOT_DIR;
     await page.emulateMedia({ media: 'print', reducedMotion: 'reduce' });
     assert.equal(await page.locator('.slide:visible').count(), 5);
     assert.deepEqual(errors, []);
-    console.log('PASS: five slides at six viewport sizes, no clipped text, name, font/assets, keyboard, touch, hashes, rapid transitions, daylight toggle, pause persistence, reduced motion, fullscreen, print visibility, no runtime/HTTP errors.');
+    console.log('PASS: five slides at nine viewport sizes, no page scrolling or clipped content, visible navigation, name, font/assets, keyboard, touch, hashes, rapid transitions, daylight toggle, pause persistence, reduced motion, fullscreen, print visibility, no runtime/HTTP errors.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

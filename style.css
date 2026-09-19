@@ -61,3 +61,132 @@ body.tab-hidden *,body.tab-hidden *:before,body.tab-hidden *:after{animation-pla
   .chapter-dock button{height:35px}
   .controls{margin-top:4px}
 }
+
+/* Presentation viewport: the journal always occupies the available screen. */
+@media screen{
+  html,body{height:100%;overflow:hidden}
+  .app-shell{width:calc(100% - 36px);height:100dvh;min-height:0;padding:12px 0 9px;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:12px}
+  .journal{height:100%;min-height:0;max-height:none;min-width:0}
+  .pages{min-width:0;min-height:0;display:block}
+  .slide-stage{position:absolute;top:0;left:0;transform-origin:top left;pointer-events:none;min-width:0;min-height:0}
+  .slide-stage:has(.active){z-index:2;pointer-events:auto}
+  .slide-stage:has(.leaving){z-index:1}
+  .slide{position:absolute;inset:0;width:100%;height:100%;min-height:0}
+  .slide.fit-measuring .reveal{animation:none!important;transform:none!important}
+  .cover-view,.finale-view{min-height:0}
+  .controls{margin-top:4px}
+  .app-footer{margin:0}
+}
+@media screen and (max-height:740px){
+  .app-shell{padding:9px 0 8px;gap:10px;grid-template-rows:auto minmax(0,1fr) auto}
+  .app-footer,.scene-badge small{display:none}
+  .topbar{min-height:38px}
+  .brand{font-size:20px}
+  .brand small{font-size:8px}
+  .scene-badge{padding:6px 14px}
+  .tool-button{min-height:35px;padding-top:5px;padding-bottom:5px}
+  .journal-top{height:30px}
+  .journal-bottom{min-height:27px;padding-top:5px;padding-bottom:5px}
+  .slide{padding-top:18px;padding-bottom:16px}
+  .cover,.finale{padding:0}
+  .page-heading{margin-bottom:17px}
+  .eyebrow{margin-bottom:10px}
+  .chapter-dock{padding-top:4px;padding-bottom:4px}
+  .chapter-dock button{height:32px}
+  .nav-button{min-height:38px}
+}
+@media screen and (max-width:900px){
+  .app-shell{width:calc(100% - 28px);gap:11px}
+  .topbar{min-height:40px}
+  .slide{padding:20px 24px}
+  .cover,.finale{padding:0}
+  .cover-copy{padding-top:22px;padding-bottom:20px}
+  .cover h1{font-size:40px}
+  .page-heading{margin-bottom:20px}
+  h2{font-size:28px;line-height:1.4}
+  .traits{gap:15px}
+  .trait{padding-top:14px}
+  .trait h3{font-size:25px}
+  .trait p{line-height:1.7}
+  .action-card{padding:15px}
+  .action-card p{margin-bottom:0}
+}
+@media screen and (max-width:600px){
+  .app-shell{width:calc(100% - 22px);padding-top:9px;padding-bottom:9px;gap:10px;grid-template-rows:auto minmax(0,1fr) auto}
+  .app-footer,.brand small{display:none}
+  .topbar{min-height:36px}
+  .brand{font-size:19px}
+  .journal-top{height:28px;font-size:10px}
+  .journal-bottom{min-height:25px;padding:5px 12px}
+  .slide{padding:18px 17px}
+  .cover,.finale{padding:0}
+  .cover.active,.cover.leaving{grid-template-rows:auto minmax(0,1fr) auto}
+  .cover-copy{padding:22px 23px 20px}
+  .cover h1{font-size:36px;line-height:1.3;margin-bottom:18px}
+  .cover .lead{font-size:14px;margin-bottom:17px}
+  .cover-view{min-height:0}
+  .cover-footer{padding:9px 15px}
+  .finale-copy{padding:25px 22px 20px;flex-shrink:0}
+  .finale-view{min-height:0;flex:1}
+  .thanks-seal{bottom:18px;font-size:21px;padding:10px;width:135px}
+  .thanks-seal>span{font-size:23px;margin-bottom:5px}
+  .thanks-seal small{margin-top:8px}
+  h2{font-size:24px;line-height:1.4}
+  .page-heading{margin-bottom:17px;flex-shrink:0}
+  .eyebrow{font-size:11px;margin-bottom:10px}
+  .intro{font-size:13px;line-height:1.6;margin-top:10px}
+  .quest-list{gap:13px}
+  .quest{padding:12px 11px;gap:11px}
+  .quest h3{font-size:20px;margin-bottom:6px;line-height:1.35}
+  .quest p{font-size:14px;line-height:1.65}
+  .quest-symbol{width:29px;height:34px;font-size:21px}
+  .traits{gap:13px;margin:auto 0}
+  .trait{grid-template-columns:30px 1fr;column-gap:12px;padding:13px 13px 0}
+  .trait-icon{font-size:27px}
+  .trait h3{font-size:23px;line-height:1.3;margin:0 0 7px}
+  .trait p{font-size:14px;line-height:1.7;margin:0 0 13px}
+  .trait p br{display:none}
+  .action-grid{gap:12px;margin:auto 0}
+  .action-card{padding:11px 12px;gap:12px}
+  .action-card h3{font-size:21px;line-height:1.25;margin-bottom:6px}
+  .action-card p{font-size:14px;line-height:1.65}
+  .action-number{font-size:21px}
+  .page-note{margin-top:16px;font-size:12px;line-height:1.5;flex-shrink:0}
+  .controls{margin:0;gap:8px}
+  .chapter-dock{padding:4px}
+  .chapter-dock button{height:31px}
+  .nav-button{min-height:40px;width:40px;min-width:40px}
+}
+@media screen and (max-width:600px) and (max-height:680px){
+  .app-shell{gap:8px;padding-top:7px;padding-bottom:7px}
+  .journal-top{height:25px;font-size:9px}
+  .journal-bottom{min-height:22px;padding-top:4px;padding-bottom:4px}
+  .slide{padding:14px}
+  .cover,.finale{padding:0}
+  .cover-copy{padding:18px 20px 15px}
+  .cover h1{font-size:33px;margin-bottom:13px}
+  .cover .lead{margin-bottom:13px}
+  .candidate-seal{width:40px;height:43px;font-size:25px}
+  .page-heading{margin-bottom:12px}
+  .eyebrow{font-size:10px;margin-bottom:8px}
+  h2{font-size:22px;line-height:1.35}
+  .quest-list,.traits,.action-grid{gap:9px}
+  .quest{padding:10px}
+  .quest h3{font-size:19px;margin-bottom:5px}
+  .quest p{font-size:13px;line-height:1.6}
+  .trait{padding:10px 11px 0;column-gap:10px}
+  .trait h3{font-size:21px;margin-bottom:5px}
+  .trait p{font-size:13px;line-height:1.65;margin-bottom:10px}
+  .action-card{padding:9px 10px;gap:10px}
+  .action-card h3{font-size:19px;margin-bottom:4px}
+  .action-card p{font-size:13px;line-height:1.55}
+  .action-number{font-size:19px}
+  .page-note{margin-top:11px;font-size:11px}
+  .finale-copy{padding:21px 20px 17px}
+  .finale h2{font-size:29px;margin-bottom:17px}
+  .finale .lead{font-size:14px;line-height:1.7}
+  .vote{font-size:23px;margin-bottom:19px}
+  .thanks-seal small{display:none}
+}
+@media print{.slide-stage{position:relative!important;width:auto!important;height:auto!important;transform:none!important;pointer-events:auto}}
+@media screen{.app-shell{grid-template-columns:minmax(0,1fr)}.topbar,.controls{min-width:0}}

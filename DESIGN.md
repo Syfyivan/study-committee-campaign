@@ -13,3 +13,7 @@ Validate every desktop and mobile slide, rapid navigation, direct links, disable
 ## Copy revision, September 19
 
 Rewrite the visible text as a short classroom speech. Remove slogans, gardening metaphors, invented first-month timelines and repeated promises. Reduce seven pages to five: introduction, motivation, working approach, proposed tasks, closing. Keep the pixel art, lighting and navigation. Do not invent grades, awards, experience, or proven personal traits; use concrete future actions. Update the slide-count checks and final-page animation trigger, then verify text layout and online behavior. Keep the old deployment as a rollback copy.
+
+## Viewport sizing follow-up
+
+Use a fixed viewport grid for the header, journal and navigation. Remove inherited minimum heights from the presentation area; narrow screens use compact rows and flexible scenery. A measured scale fallback fits an unusually small viewport without cutting off content. Keep navigation outside the scaled content, and restore natural sizing in print. Verify all five slides at desktop, embedded-window and small-phone sizes, including actual child bounds rather than merely hiding page overflow.
