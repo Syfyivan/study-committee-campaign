@@ -12,7 +12,9 @@
   <link rel="stylesheet" href="style.css?v=themes1">
   <link rel="stylesheet" href="themes.css?v=themes1">
   <link rel="stylesheet" href="theme-picker.css?v=themes1">
-  <script src="app.js?v=themes1" defer></script>
+  <link rel="stylesheet" href="pet.css?v=pets1">
+  <script src="app.js?v=pets1" defer></script>
+  <script src="pet.js?v=pets1" defer></script>
 </head>
 <body data-scene="morning" data-theme="clean">
   <script>
@@ -77,7 +79,16 @@
           <div class="finale-copy"><p class="eyebrow reveal">谢谢大家</p><h2 id="title-5" class="reveal">希望大家<br><span class="accent">支持我。</span></h2><p class="lead reveal">如果当选，我会认真做好这些工作。<br>做得不好的地方，也请大家提醒我。</p><div class="vote reveal">请投<span data-profile="name">宋如一</span>一票 <span aria-hidden="true">✦</span></div><p class="finale-signature reveal">学习委员竞选人 / <span data-profile="name">宋如一</span><span class="signature-divider">·</span><span data-profile="className">班级：待填写</span></p></div><aside class="finale-view"><div class="theme-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-title">学<br>习</span><span class="art-note">一起，把学习的事做好。</span><span class="art-spark">✦</span></div><div class="thanks-seal"><span aria-hidden="true">✧</span>谢谢大家<small>THANK YOU</small></div></aside>
         </section>
       </div>
-      <div class="journal-bottom"><span>学习委员竞选</span><span id="counter" aria-live="polite">01 / 05</span></div>
+      <div class="journal-bottom companion-rail">
+        <aside id="pet" class="companion" data-state="idle" aria-label="桌宠讲解">
+          <button id="pet-replay" class="pet-avatar" aria-label="让小蓝再讲一遍本页" title="点我，再讲一遍"><span class="pet-shadow" aria-hidden="true"></span><span class="pet-sprite" aria-hidden="true"></span><span class="pet-tap" aria-hidden="true">↻</span></button>
+          <div class="pet-bubble">
+            <div class="pet-heading"><strong id="pet-name">小蓝</strong><span id="pet-chapter">自我介绍</span><span id="counter" aria-live="polite">01 / 05</span><button id="pet-voice" class="pet-voice" aria-pressed="false" aria-label="开启桌宠语音讲解"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path class="voice-waves" d="M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/><path class="voice-mute" d="m17 10 4 4m0-4-4 4"/></svg><span>开声音</span></button></div>
+            <p id="pet-text" aria-live="polite" aria-atomic="true">这是宋如一的学习委员竞选。接下来，聊聊竞选理由和工作打算。</p>
+            <div class="pet-footnote"><span id="pet-status">点桌宠，可以再讲一遍</span><span class="pet-speaking" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+          </div>
+        </aside>
+      </div>
     </main>
     <nav class="controls" aria-label="幻灯片导航"><button id="prev" class="nav-button" aria-label="上一页"><span aria-hidden="true">←</span><span>上一页</span></button><div id="dots" class="chapter-dock" aria-label="选择章节"></div><button id="next" class="nav-button primary" aria-label="下一页"><span>下一页</span><span aria-hidden="true">→</span></button></nav>
     <footer class="app-footer"><span>← → 翻页 <span class="footer-separator">/</span> F 全屏</span><span>学习委员竞选 · 宋如一</span></footer>

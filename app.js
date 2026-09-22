@@ -89,6 +89,7 @@ function applyTheme(theme, updateUrl = false) {
   setScene();
   scheduleLayout();
   document.fonts.ready.then(scheduleLayout);
+  document.dispatchEvent(new CustomEvent('campaign:theme'));
 }
 
 function fitCurrentSlide() {
@@ -165,6 +166,7 @@ function go(index, updateHash = true) {
   $('#next').disabled = current === slides.length - 1;
   setScene();
   if (current === slides.length - 1 && motionEnabled) celebrate();
+  document.dispatchEvent(new CustomEvent('campaign:slide'));
   if (updateHash) {
     try { history.replaceState(null, '', `#${current + 1}`); } catch { /* Supports offline file:// use. */ }
   }
@@ -270,6 +272,7 @@ function syncMotion() {
     clearTimeout(leavingTimer);
     slides.forEach((slide) => slide.classList.remove('leaving'));
   }
+  document.dispatchEvent(new CustomEvent('campaign:motion'));
 }
 
 $('#prev').addEventListener('click', () => go(current - 1));

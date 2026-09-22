@@ -30,3 +30,11 @@ The audience is the candidate's classmates; there is no agreed aesthetic prefere
 Treat these as distinct presentations rather than palette swaps: surfaces, type weights, borders, motifs and motion change together. Keep readable text still; animate only decorative artwork, respect pause and reduced-motion settings. Add no dependencies, generated personal claims or third-party requests.
 
 Use a native modal dialog for keyboard focus containment and Escape. A selection preserves the current page, stores the preference locally, and updates the shareable theme query parameter without dropping other query values or the hash. Validate four themes across nine viewports and all five slides, then verify preference precedence, keyboard behavior, mobile picker bounds and full-screen switching. Keep a deployment backup.
+
+## Companion presenter, September 22
+
+Give each visual theme a distinct original companion: a blue-scarf seal, a sticker cat, a cyan robot and a pixel chick. Use generated transparent 2x2 sprite sheets with idle, talk, point and happy poses; preserve the generated files and use percentage-based CSS frame selection. Gentle breathing and finite greeting/talking animations respect the presentation's motion pause and system reduced-motion preference.
+
+Reserve the journal's bottom strip for the pet and speech bubble, rather than placing an overlay on top of the speech. Keep one concise, natural explanation per chapter. On very short mobile windows, remove the optional large typographic motif before reducing text size. Maintain full-viewport layout and navigation.
+
+Sound starts muted on every load. Opt-in device speech reads the current paragraph; navigation cancels the previous utterance and ignores stale callbacks, while a theme change preserves its position. Replay is separate from page navigation. Missing or failed speech keeps the text available. Hidden tabs and print cancel speech; static printed slides omit the companion. No new dependencies or external voice service. Test speech lifecycle with a browser API mock, explicitly separate from real audible-output testing.
