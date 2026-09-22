@@ -9,16 +9,30 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23704929' d='M0 0h32v32H0z'/%3E%3Cpath fill='%23fff2ce' d='M4 4h24v24H4z'/%3E%3Cpath fill='%233c6945' d='M14 15H8V9h6v4h4V7h6v8h-6v10h-4z'/%3E%3C/svg%3E">
   <link rel="preload" href="assets/fusion-pixel.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/learning-valley.png" as="image">
-  <link rel="stylesheet" href="style.css?v=fit4">
-  <script src="app.js?v=fit4" defer></script>
+  <link rel="stylesheet" href="style.css?v=themes1">
+  <link rel="stylesheet" href="themes.css?v=themes1">
+  <link rel="stylesheet" href="theme-picker.css?v=themes1">
+  <script src="app.js?v=themes1" defer></script>
 </head>
-<body data-scene="morning">
+<body data-scene="morning" data-theme="clean">
+  <script>
+    (() => {
+      const choices = ['clean', 'playful', 'midnight', 'valley'];
+      const linked = new URLSearchParams(location.search).get('theme');
+      let saved;
+      try { saved = localStorage.getItem('campaign-theme'); } catch { /* Optional preference. */ }
+      document.body.dataset.theme = choices.includes(linked) ? linked : choices.includes(saved) ? saved : 'clean';
+    })();
+  </script>
   <div class="world" aria-hidden="true"><div class="landscape"></div><div class="sky-tint"></div><div class="sun-halo"></div><div class="sunbeams"></div><div class="world-shade"></div><canvas id="atmosphere"></canvas><div class="pointer-light"></div></div>
   <div class="app-shell">
     <header class="topbar">
-      <a href="#1" class="brand"><span class="brand-icon" aria-hidden="true">✦</span><span>学习小镇<small>LEARNING VALLEY</small></span></a>
+      <a href="#1" class="brand"><span class="brand-icon" aria-hidden="true">✦</span><span><span id="brand-name">宋如一</span><small id="brand-subtitle">学习委员竞选</small></span></a>
       <div class="scene-badge"><span id="weather-icon" aria-hidden="true">☀</span><span><b id="scene-label">春日 · 晨光</b><small id="scene-caption">晨间光影</small></span></div>
-      <div class="tools"><button id="lighting" class="tool-button" aria-label="切换昼夜光影" title="切换昼夜光影"><span aria-hidden="true">☀</span><span class="tool-label">昼夜</span></button><button id="motion" class="tool-button" aria-pressed="true" title="暂停动态效果"><span aria-hidden="true">✧</span><span class="tool-label">动效开</span></button><button id="fullscreen" class="tool-button" title="全屏演示（F）"><span aria-hidden="true">⛶</span><span class="tool-label">全屏</span></button></div>
+      <div class="tools">
+        <button id="theme-toggle" class="tool-button theme-button" aria-haspopup="dialog" aria-controls="theme-dialog" title="切换演示风格"><span aria-hidden="true">◈</span><span class="tool-label">换风格</span></button>
+        <button id="lighting" class="tool-button" aria-label="切换昼夜光影" title="切换昼夜光影"><span aria-hidden="true">☀</span><span class="tool-label">昼夜</span></button><button id="motion" class="tool-button" aria-pressed="true" title="暂停动态效果"><span aria-hidden="true">✧</span><span class="tool-label">动效开</span></button><button id="fullscreen" class="tool-button" title="全屏演示（F）"><span aria-hidden="true">⛶</span><span class="tool-label">全屏</span></button>
+      </div>
     </header>
     <main id="deck" class="journal" aria-label="宋如一的竞选演示">
       <div class="journal-top"><span><i aria-hidden="true"></i> 宋如一 · 学习委员竞选</span><span id="chapter-label">自我介绍</span></div>
@@ -30,7 +44,7 @@
             <p class="lead reveal">今天我想竞选我们班的学习委员。<br>下面说说我的想法。</p>
             <div class="candidate reveal"><div class="candidate-seal" aria-hidden="true">宋</div><div><span class="candidate-label">竞选岗位</span><strong>学习委员</strong><span class="class-name" data-profile="className">班级：待填写</span></div></div>
           </div>
-          <aside class="cover-view" aria-label="像素田园风景"></aside>
+          <aside class="cover-view" aria-hidden="true"><div class="theme-art"><span class="art-orbit"></span><span class="art-title">学<br>习</span><span class="art-note">一起，把学习的事做好。</span><span class="art-spark">✦</span></div></aside>
           <div class="cover-footer"><span>自我介绍 · 竞选理由 · 工作打算</span><span>下一页：竞选理由 <span aria-hidden="true">→</span></span></div>
         </section>
         <section class="slide" aria-labelledby="title-2" data-scene="morning" data-chapter="竞选理由">
@@ -60,7 +74,7 @@
           <div class="page-note reveal">具体怎么安排，会先问问大家的意见。</div>
         </section>
         <section class="slide finale" aria-labelledby="title-5" data-scene="night" data-chapter="谢谢大家">
-          <div class="finale-copy"><p class="eyebrow reveal">谢谢大家</p><h2 id="title-5" class="reveal">希望大家<br><span class="accent">支持我。</span></h2><p class="lead reveal">如果当选，我会认真做好这些工作。<br>做得不好的地方，也请大家提醒我。</p><div class="vote reveal">请投<span data-profile="name">宋如一</span>一票 <span aria-hidden="true">✦</span></div><p class="finale-signature reveal">学习委员竞选人 / <span data-profile="name">宋如一</span><span class="signature-divider">·</span><span data-profile="className">班级：待填写</span></p></div><aside class="finale-view"><div class="thanks-seal"><span aria-hidden="true">✧</span>谢谢大家<small>THANK YOU</small></div></aside>
+          <div class="finale-copy"><p class="eyebrow reveal">谢谢大家</p><h2 id="title-5" class="reveal">希望大家<br><span class="accent">支持我。</span></h2><p class="lead reveal">如果当选，我会认真做好这些工作。<br>做得不好的地方，也请大家提醒我。</p><div class="vote reveal">请投<span data-profile="name">宋如一</span>一票 <span aria-hidden="true">✦</span></div><p class="finale-signature reveal">学习委员竞选人 / <span data-profile="name">宋如一</span><span class="signature-divider">·</span><span data-profile="className">班级：待填写</span></p></div><aside class="finale-view"><div class="theme-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-title">学<br>习</span><span class="art-note">一起，把学习的事做好。</span><span class="art-spark">✦</span></div><div class="thanks-seal"><span aria-hidden="true">✧</span>谢谢大家<small>THANK YOU</small></div></aside>
         </section>
       </div>
       <div class="journal-bottom"><span>学习委员竞选</span><span id="counter" aria-live="polite">01 / 05</span></div>
@@ -68,6 +82,17 @@
     <nav class="controls" aria-label="幻灯片导航"><button id="prev" class="nav-button" aria-label="上一页"><span aria-hidden="true">←</span><span>上一页</span></button><div id="dots" class="chapter-dock" aria-label="选择章节"></div><button id="next" class="nav-button primary" aria-label="下一页"><span>下一页</span><span aria-hidden="true">→</span></button></nav>
     <footer class="app-footer"><span>← → 翻页 <span class="footer-separator">/</span> F 全屏</span><span>学习委员竞选 · 宋如一</span></footer>
   </div>
+  <dialog id="theme-dialog" class="theme-dialog" aria-labelledby="theme-title" aria-describedby="theme-description">
+    <div class="theme-dialog-heading"><div><p class="theme-kicker">挑一个顺眼的</p><h2 id="theme-title">今天用哪种风格？</h2></div><button id="theme-close" class="theme-close" aria-label="关闭风格选择">×</button></div>
+    <p id="theme-description">内容一样，选你喜欢的就好。随时都能换。</p>
+    <div class="theme-options">
+      <button class="theme-option" data-theme-choice="clean" aria-pressed="true"><span class="theme-preview preview-clean" aria-hidden="true"><span class="preview-copy">大家好，<br>我是<b>宋如一。</b><i></i><i></i></span><span class="preview-art">学<br>习</span></span><span class="theme-option-label"><strong>简约蓝白</strong><span class="theme-check" aria-hidden="true">✓</span></span><span class="theme-description">清爽留白，大字好读</span></button>
+      <button class="theme-option" data-theme-choice="playful" aria-pressed="false"><span class="theme-preview preview-playful" aria-hidden="true"><span class="preview-copy">大家好，<br>我是<b>宋如一。</b><i></i><i></i></span><span class="preview-art">学<br>习</span></span><span class="theme-option-label"><strong>活力贴纸</strong><span class="theme-check" aria-hidden="true">✓</span></span><span class="theme-description">明亮色块，有点俏皮</span></button>
+      <button class="theme-option" data-theme-choice="midnight" aria-pressed="false"><span class="theme-preview preview-midnight" aria-hidden="true"><span class="preview-copy">大家好，<br>我是<b>宋如一。</b><i></i><i></i></span><span class="preview-art">学<br>习</span></span><span class="theme-option-label"><strong>深色科技</strong><span class="theme-check" aria-hidden="true">✓</span></span><span class="theme-description">深蓝夜色，微光流动</span></button>
+      <button class="theme-option" data-theme-choice="valley" aria-pressed="false"><span class="theme-preview preview-valley" aria-hidden="true"><span class="preview-copy">大家好，<br>我是<b>宋如一。</b><i></i><i></i></span><span class="preview-art">✦</span></span><span class="theme-option-label"><strong>像素田园</strong><span class="theme-check" aria-hidden="true">✓</span></span><span class="theme-description">像素山谷，轻松温暖</span></button>
+    </div>
+    <p id="theme-status" class="theme-status" aria-live="polite">当前：简约蓝白 · 会记住你的选择</p>
+  </dialog>
   <div id="progress" class="progress" aria-hidden="true"></div>
 </body>
 </html>

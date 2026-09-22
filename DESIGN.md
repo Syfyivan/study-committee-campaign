@@ -17,3 +17,16 @@ Rewrite the visible text as a short classroom speech. Remove slogans, gardening 
 ## Viewport sizing follow-up
 
 Use a fixed viewport grid for the header, journal and navigation. Remove inherited minimum heights from the presentation area; narrow screens use compact rows and flexible scenery. A measured scale fallback fits an unusually small viewport without cutting off content. Keep navigation outside the scaled content, and restore natural sizing in print. Verify all five slides at desktop, embedded-window and small-phone sizes, including actual child bounds rather than merely hiding page overflow.
+
+## Selectable styles, September 22
+
+The audience is the candidate's classmates; there is no agreed aesthetic preference. Offer four complete visual treatments of the same five-page speech, with a visible preview picker. Preserve the existing pixel valley as one option and start new visitors on clean blue and white. Share the same content, navigation and viewport fitting instead of duplicating pages. Baseline nine-viewport and interaction checks passed before this change.
+
+- Clean: white #ffffff, pale blue #eef3fc, ink #19304e, blue #2462df, muted #56677d. System sans display, restrained mono numbering, generous white space and a typographic study motif inside a fine orbit.
+- Playful: cream #fffef6, yellow #fff1ad, ink #252339, blue #3159c9, pink #f7d8ed. Heavy system sans headings, hard offset shadows, bright cards and a tilted letterform sticker.
+- Midnight: navy #060f20, surface #0d1b30, ink #ebf5ff, cyan #67e8ef, line #2c465e. Crisp system sans headings, mono numbering, a fine grid and a slow geometric glow.
+- Valley: retain the original art, pixel typography, wooden frame and lighting.
+
+Treat these as distinct presentations rather than palette swaps: surfaces, type weights, borders, motifs and motion change together. Keep readable text still; animate only decorative artwork, respect pause and reduced-motion settings. Add no dependencies, generated personal claims or third-party requests.
+
+Use a native modal dialog for keyboard focus containment and Escape. A selection preserves the current page, stores the preference locally, and updates the shareable theme query parameter without dropping other query values or the hash. Validate four themes across nine viewports and all five slides, then verify preference precedence, keyboard behavior, mobile picker bounds and full-screen switching. Keep a deployment backup.

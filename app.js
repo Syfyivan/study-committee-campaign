@@ -3,6 +3,12 @@ const profile = { name: '宋如一', className: '' };
 const $ = (selector) => document.querySelector(selector);
 const slides = [...document.querySelectorAll('.slide')];
 const labels = ['介绍', '理由', '做事', '工作', '致谢'];
+const themes = {
+  clean: { name: '简约蓝白', color: '#f1f5ff', particle: '#769bff' },
+  playful: { name: '活力贴纸', color: '#fff177', particle: '#ff729a' },
+  midnight: { name: '深色科技', color: '#09172b', particle: '#75ddff' },
+  valley: { name: '像素田园', color: '#254b39', particle: '#fff3b4' },
+};
 const sceneLabels = { morning: ['☀', '春日 · 晨光', '晨间光影'], afternoon: ['☀', '午后 · 晴朗', '午后光影'], golden: ['◒', '黄昏 · 暖阳', '黄昏光影'], night: ['☾', '星夜 · 晴朗', '夜间光影'] };
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let preferredMotion = true;
@@ -53,11 +59,36 @@ function setScene() {
   document.body.dataset.scene = scene;
   const [icon, label, caption] = sceneLabels[scene];
   $('#weather-icon').textContent = icon;
-  $('#scene-label').textContent = label;
-  $('#scene-caption').textContent = caption;
+  const valley = document.body.dataset.theme === 'valley';
+  $('#scene-label').textContent = valley ? label : themes[document.body.dataset.theme].name;
+  $('#scene-caption').textContent = valley ? caption : scene === 'night' ? '夜间光影' : '日间光影';
   $('#lighting').firstElementChild.textContent = scene === 'night' ? '☾' : '☀';
   $('#lighting').setAttribute('aria-label', scene === 'night' ? '切换日间光影' : '切换夜间光影');
   $('#lighting').title = scene === 'night' ? '切换日间光影' : '切换夜间光影';
+}
+
+function applyTheme(theme, updateUrl = false) {
+  if (!Object.hasOwn(themes, theme)) return;
+  document.body.dataset.theme = theme;
+  const { name, color } = themes[theme];
+  document.querySelector('meta[name="theme-color"]').content = color;
+  $('#brand-name').textContent = theme === 'valley' ? '学习小镇' : profile.name;
+  $('#brand-subtitle').textContent = theme === 'valley' ? 'LEARNING VALLEY' : '学习委员竞选';
+  $('#theme-toggle').title = `切换演示风格，当前：${name}`;
+  $('#theme-toggle').setAttribute('aria-label', `换风格，当前：${name}`);
+  $('#theme-status').textContent = `当前：${name} · 会记住你的选择`;
+  document.querySelectorAll('[data-theme-choice]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme));
+  });
+  try { localStorage.setItem('campaign-theme', theme); } catch { /* Optional preference. */ }
+  if (updateUrl) {
+    const url = new URL(location.href);
+    url.searchParams.set('theme', theme);
+    try { history.replaceState(null, '', url); } catch { /* Offline file:// still supports switching. */ }
+  }
+  setScene();
+  scheduleLayout();
+  document.fonts.ready.then(scheduleLayout);
 }
 
 function fitCurrentSlide() {
@@ -197,8 +228,9 @@ function frame(now) {
     const y = (p.y * height - elapsed * p.speed * 6 + height * 100) % height;
     const alpha = .2 + (Math.sin(elapsed * p.speed + p.phase) + 1) * .22;
     context.globalAlpha = alpha;
-    context.fillStyle = night ? '#edffb8' : '#fff3b4';
-    context.shadowColor = night ? '#dcfca1' : '#ffd578';
+    const pixelNight = night && document.body.dataset.theme === 'valley';
+    context.fillStyle = pixelNight ? '#edffb8' : themes[document.body.dataset.theme].particle;
+    context.shadowColor = context.fillStyle;
     context.shadowBlur = night ? 14 : 6;
     context.fillRect(Math.round(x), Math.round(y), p.size, p.size);
     if (night && p.size === 3 && alpha > .5) {
@@ -241,6 +273,24 @@ function syncMotion() {
 }
 
 $('#prev').addEventListener('click', () => go(current - 1));
+const themeDialog = $('#theme-dialog');
+$('#theme-toggle').addEventListener('click', () => {
+  themeDialog.showModal();
+  themeDialog.querySelector('[aria-pressed="true"]').focus();
+});
+$('#theme-close').addEventListener('click', () => themeDialog.close());
+themeDialog.addEventListener('close', () => $('#theme-toggle').focus({ preventScroll: true }));
+themeDialog.addEventListener('click', (event) => {
+  if (event.target !== themeDialog) return;
+  const rect = themeDialog.getBoundingClientRect();
+  if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) themeDialog.close();
+});
+document.querySelectorAll('[data-theme-choice]').forEach(button => {
+  button.addEventListener('click', () => {
+    applyTheme(button.dataset.themeChoice, true);
+    themeDialog.close();
+  });
+});
 $('#next').addEventListener('click', () => go(current + 1));
 $('#fullscreen').addEventListener('click', fullscreen);
 $('#lighting').addEventListener('click', () => { manualScene = document.body.dataset.scene === 'night' ? 'morning' : 'night'; setScene(); });
@@ -257,6 +307,7 @@ document.addEventListener('fullscreenchange', () => {
   $('#fullscreen').setAttribute('aria-label', active ? '退出全屏' : '全屏演示');
 });
 document.addEventListener('keydown', (event) => {
+  if (themeDialog.open) return;
   if (event.target.closest('input,textarea,select,[contenteditable="true"]') || event.ctrlKey || event.metaKey || event.altKey) return;
   if (event.target.closest('button,a') && [' ', 'Enter'].includes(event.key)) return;
   if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); go(current + 1); }
@@ -286,5 +337,6 @@ window.addEventListener('hashchange', fromHash);
 document.addEventListener('visibilitychange', syncMotion);
 reducedMotion.addEventListener('change', syncMotion);
 resizeCanvas();
+applyTheme(document.body.dataset.theme);
 fromHash();
 syncMotion();
