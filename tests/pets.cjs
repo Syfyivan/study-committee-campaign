@@ -3,7 +3,7 @@
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:8086/';
-const themes = { clean: '小蓝', playful: '贴贴', midnight: '小芯', valley: '啾啾' };
+const themes = { clean: '小蓝', playful: '贴贴', midnight: '小芯', valley: '啾啾', forest: '小栗', ocean: '泡泡', lunar: '月月' };
 const viewports = [[1366,768], [1280,720], [1920,1080], [800,600], [600,700],
   [768,1024], [390,844], [360,640], [320,568]];
 
@@ -153,6 +153,12 @@ async function petLayoutProblems(page) {
       assert.equal(await page.locator('#pet-name').textContent(), name);
       const sprite = await page.locator('.pet-sprite').evaluate(el => getComputedStyle(el).backgroundImage);
       assert.ok(sprite.includes(`/assets/pets/${theme}.png`), `${theme} uses its own sprite image`);
+      await page.locator('.pet-sprite').evaluate(async element => {
+        const image = new Image();
+        image.src = getComputedStyle(element).backgroundImage.match(/url\(["']?(.*?)["']?\)/)[1];
+        await image.decode();
+        if (image.naturalWidth < 1000 || image.naturalWidth !== image.naturalHeight) throw new Error('Invalid pet sheet');
+      });
       assert.equal(await page.locator('#pet-text').textContent(), narration[4], 'appearance preserves narration');
     }
 
@@ -221,7 +227,7 @@ async function petLayoutProblems(page) {
       assert.equal(await noSpeech.locator('#pet').getAttribute('data-chapter'), String(number));
     }
     await noSpeech.close();
-    console.log('PASS: five narration states, four sprite identities, replay, and mocked speech opt-in/cancellation/stale callbacks/theme continuity/error fallback/default mute. No real audio was tested.');
+    console.log('PASS: five narration states, seven sprite identities, replay, and mocked speech opt-in/cancellation/stale callbacks/theme continuity/error fallback/default mute. No real audio was tested.');
 
     await assertNoPetMotion(page, 'system reduced motion disables all companion animations');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -235,6 +241,22 @@ async function petLayoutProblems(page) {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await settle(page);
     await assertNoPetMotion(page, 'reduced motion remains disabled after interaction');
+
+    // New artwork and the rabbit's pose-alignment animation obey both controls.
+    await page.locator('#dots button').first().click();
+    for (const theme of ['forest', 'ocean', 'lunar']) {
+      await chooseTheme(page, theme);
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      if (await page.locator('#motion').getAttribute('aria-pressed') === 'false') await page.locator('#motion').click();
+      await page.locator('#pet-replay').click();
+      await settle(page);
+      assert.equal(await page.locator('.slide.active .theme-art').evaluate(element => element.getAnimations({ subtree: true }).some(animation => animation.playState === 'running')), true, `${theme} artwork animates`);
+      await page.locator('#motion').click();
+      await assertNoPetMotion(page, `${theme} companion respects pause`);
+      assert.equal(await page.locator('.slide.active .theme-art').evaluate(element => element.getAnimations({ subtree: true }).some(animation => animation.playState === 'running')), false, `${theme} artwork respects pause`);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await assertNoPetMotion(page, `${theme} companion respects reduced motion`);
+    }
 
     const failures = [];
     for (const theme of Object.keys(themes)) {
@@ -255,6 +277,6 @@ async function petLayoutProblems(page) {
     await page.emulateMedia({ media: 'print' });
     assert.equal(await page.locator('#pet').isVisible(), false, 'printed slides hide the companion');
     assert.deepEqual(errors, [], 'no runtime or HTTP errors');
-    console.log('PASS: pet animation controls, print hiding, and four themes x nine viewports x five chapters companion bounds.');
+    console.log('PASS: pet animation controls, print hiding, and seven themes x nine viewports x five chapters companion bounds.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

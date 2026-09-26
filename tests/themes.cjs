@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const base = process.env.BASE_URL || 'http://127.0.0.1:8086/';
 const output = process.env.SCREENSHOT_DIR;
-const themes = ['clean', 'playful', 'midnight', 'valley'];
+const themes = ['clean', 'playful', 'midnight', 'valley', 'forest', 'ocean', 'lunar'];
 const viewports = [[1366, 768], [1280, 720], [1920, 1080], [800, 600],
   [600, 700], [768, 1024], [390, 844], [360, 640], [320, 568]];
 
@@ -32,7 +32,7 @@ async function assertTheme(page, expected) {
   await page.waitForFunction(theme => document.body.dataset.theme === theme, expected);
   const choices = await page.locator('#theme-dialog button[data-theme-choice]').evaluateAll(buttons =>
     buttons.map(button => [button.dataset.themeChoice, button.getAttribute('aria-pressed')]));
-  assert.deepEqual(choices.map(([theme]) => theme).sort(), [...themes].sort(), 'exactly four theme choices');
+  assert.deepEqual(choices.map(([theme]) => theme).sort(), [...themes].sort(), 'exactly seven theme choices');
   assert.deepEqual(choices.filter(([, pressed]) => pressed === 'true').map(([theme]) => theme), [expected],
     `only ${expected} has aria-pressed=true`);
   assert.ok(choices.every(([theme, pressed]) => pressed === String(theme === expected)), 'explicit pressed states');
@@ -78,8 +78,8 @@ async function chooseTheme(page, theme, keyboard = false) {
 
 // Check rendered rectangles and text runs as well as scroll dimensions: hiding
 // overflow alone must not make clipped content pass the viewport checks.
-async function layoutProblems(page, picker = false) {
-  return page.evaluate(pickerOpen => {
+async function layoutProblems(page, picker = false, choiceKey = null) {
+  return page.evaluate(({ pickerOpen, choiceKey }) => {
     const problems = [];
     const viewport = { left: 0, top: 0, right: innerWidth, bottom: innerHeight };
     const label = element => element.id ? `#${element.id}` :
@@ -109,7 +109,7 @@ async function layoutProblems(page, picker = false) {
     const slide = document.querySelector('.slide.active');
     const root = pickerOpen ? document.querySelector('#theme-dialog') : slide;
     const rootBounds = root.getBoundingClientRect();
-    const interfaceSelector = pickerOpen ? '#theme-dialog,#theme-dialog button' :
+    const interfaceSelector = pickerOpen ? `#theme-dialog,#theme-close,[data-theme-choice="${choiceKey}"]` :
       '.topbar,.journal,.pages,.controls,.tools button,.controls button';
     for (const element of document.querySelectorAll(interfaceSelector)) {
       if (!visible(element)) continue;
@@ -140,6 +140,10 @@ async function layoutProblems(page, picker = false) {
     let text;
     while ((text = walker.nextNode())) {
       if (!text.textContent.trim() || !visible(text.parentElement)) continue;
+      // The gallery intentionally scrolls; inspect the card scrolled into view,
+      // and always inspect the fixed dialog heading, close button and footer.
+      const option = text.parentElement.closest('[data-theme-choice]');
+      if (pickerOpen && option && option.dataset.themeChoice !== choiceKey) continue;
       const range = document.createRange();
       range.selectNodeContents(text);
       for (const rect of range.getClientRects()) {
@@ -160,7 +164,7 @@ async function layoutProblems(page, picker = false) {
       }
     }
     return [...new Set(problems)];
-  }, picker);
+  }, { pickerOpen: picker, choiceKey });
 }
 
 (async () => {
@@ -207,11 +211,11 @@ async function layoutProblems(page, picker = false) {
     }
     await page.reload();
     await settle(page);
-    await assertTheme(page, 'valley');
+    await assertTheme(page, 'lunar');
     await assertSlide(page, 4);
     await page.goto(urlFor());
     await settle(page);
-    await assertTheme(page, 'valley');
+    await assertTheme(page, 'lunar');
     await assertSlide(page, 4);
     await page.goto(urlFor('midnight'));
     await settle(page);
@@ -254,6 +258,16 @@ async function layoutProblems(page, picker = false) {
       await page.goto(urlFor(theme, 1));
       await settle(page);
       await assertTheme(page, theme);
+      if (['forest', 'ocean', 'lunar'].includes(theme)) {
+        const artwork = await page.locator('.slide.active .theme-art').evaluate(async element => {
+          const source = getComputedStyle(element).backgroundImage.match(/url\(["']?(.*?)["']?\)/)[1];
+          const image = new Image(); image.src = source;
+          await image.decode();
+          return { source, width: image.naturalWidth, height: image.naturalHeight };
+        });
+        assert.ok(artwork.source.endsWith(`/assets/themes/${theme}.png`));
+        assert.ok(artwork.width > 500 && artwork.height > 500, 'illustrated artwork decodes');
+      }
       for (const [width, height] of viewports) {
         await page.setViewportSize({ width, height });
         await settle(page);
@@ -269,12 +283,15 @@ async function layoutProblems(page, picker = false) {
           if (number < 5) await page.keyboard.press('ArrowRight');
         }
       }
-      // At 320px all four choices must remain visible and can each be clicked.
+      // All seven cards must be reachable in the small-screen gallery while
+      // its close button and status stay in the viewport.
       await page.locator('#dots button').nth(3).click();
       await openPicker(page);
-      const pickerProblems = await layoutProblems(page, true);
-      if (pickerProblems.length) failures.push({ theme, viewport: '320x568', picker: true, problems: pickerProblems });
-      for (const choice of themes) assert.equal(await page.locator(`[data-theme-choice="${choice}"]`).isVisible(), true);
+      for (const choice of themes) {
+        await page.locator(`[data-theme-choice="${choice}"]`).scrollIntoViewIfNeeded();
+        const pickerProblems = await layoutProblems(page, true, choice);
+        if (pickerProblems.length) failures.push({ theme, viewport: '320x568', picker: choice, problems: pickerProblems });
+      }
       if (output) await page.screenshot({ path: path.join(output, `theme-${theme}-320-picker.png`), fullPage: true });
       await page.locator(`[data-theme-choice="${theme}"]`).click();
       await assertClosed(page);
@@ -284,7 +301,7 @@ async function layoutProblems(page, picker = false) {
     }
     assert.deepEqual(failures, [], 'theme layout failures (real text/control bounds and scroll dimensions)');
     assert.deepEqual(errors, [], 'runtime or HTTP errors');
-    console.log('PASS: four themes x nine viewports x five slides; no page scrolling, clipped text, off-screen or covered controls; narrow picker is visible and usable.');
+    console.log('PASS: seven themes x nine viewports x five slides; illustrations decoded; no page scrolling, clipped text, off-screen or covered controls; all seven gallery cards reachable.');
   } finally {
     await browser.close();
   }

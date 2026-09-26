@@ -38,3 +38,15 @@ Give each visual theme a distinct original companion: a blue-scarf seal, a stick
 Reserve the journal's bottom strip for the pet and speech bubble, rather than placing an overlay on top of the speech. Keep one concise, natural explanation per chapter. On very short mobile windows, remove the optional large typographic motif before reducing text size. Maintain full-viewport layout and navigation.
 
 Sound starts muted on every load. Opt-in device speech reads the current paragraph; navigation cancels the previous utterance and ignores stale callbacks, while a theme change preserves its position. Replay is separate from page navigation. Missing or failed speech keeps the text available. Hidden tabs and print cancel speech; static printed slides omit the companion. No new dependencies or external voice service. Test speech lifecycle with a browser API mock, explicitly separate from real audible-output testing.
+
+## Illustrated collection, September 26
+
+Add three original illustrated themes while preserving the current four, natural speech, default preference, navigation and single-viewport presentation. Baseline nine-viewport verification passed before editing. Reuse the existing non-pixel foundation by replacing its enumerated three-theme selector with the existing non-valley selector; keep distinctive treatments in a separate stylesheet. This is the complete simplification scope; do not restructure the slide or speech logic.
+
+- Forest / 森野手账: ivory #f7f4e8, ink #314c3a, sage #dce5d4, brass #927848. Chinese serif display with sans body, fine ruled paper, botanical reading-nook artwork, tucked paper cards and an owl named 小栗. Signature: an arched watercolor window and notebook margin.
+- Ocean / 海盐晴空: chalk #f8fcf9, seafoam #def1eb, teal #177976, navy #254c59. Round sans display with generous line space, postcard edges, layered sea-glass cards and a watercolor coastline. Signature: a sunlit coastal postcard with a sea otter named 泡泡.
+- Lunar / 星月剧场: ink #191d33, plum #272840, cream #f1eadc, antique gold #ddbc77, lavender #bdb1d1. Serif display with sans body, thin gold rules, theater-arch artwork and measured starlight. Signature: a luminous celestial library with a moon rabbit named 月月.
+
+Use generated artwork for each cover/finale and transparent four-pose pet sheets. Keep static body text readable; animate decorative light and artwork gently, respecting motion pause and reduced motion. Provide a seven-card gallery with artwork previews, scrollable options only and a persistent close button. No new packages, external font services or fabricated personal claims.
+
+Extend existing interaction and clipping tests to all seven themes and all five slides at nine sizes. Check picker scrolling/focus, illustration loading, pet poses, reduced motion and actual rendered screenshots before publishing. Preserve a complete server backup and verify both GitHub's reference and public deployment separately.

@@ -9,6 +9,9 @@
     playful: { name: '贴贴', animal: '贴纸小猫' },
     midnight: { name: '小芯', animal: '发光机器人' },
     valley: { name: '啾啾', animal: '像素小鸡' },
+    forest: { name: '小栗', animal: '围巾小猫头鹰' },
+    ocean: { name: '泡泡', animal: '海边小海獭' },
+    lunar: { name: '月月', animal: '星星小月兔' },
   };
   const narration = [
     '这是宋如一的学习委员竞选。接下来，聊聊竞选理由和工作打算。',

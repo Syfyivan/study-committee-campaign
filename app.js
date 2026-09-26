@@ -8,6 +8,9 @@ const themes = {
   playful: { name: '活力贴纸', color: '#fff177', particle: '#ff729a' },
   midnight: { name: '深色科技', color: '#09172b', particle: '#75ddff' },
   valley: { name: '像素田园', color: '#254b39', particle: '#fff3b4' },
+  forest: { name: '森野手账', color: '#f7f4e8', particle: '#a8ba85' },
+  ocean: { name: '海盐晴空', color: '#def1eb', particle: '#75cfc4' },
+  lunar: { name: '星月剧场', color: '#191d33', particle: '#ddbc77' },
 };
 const sceneLabels = { morning: ['☀', '春日 · 晨光', '晨间光影'], afternoon: ['☀', '午后 · 晴朗', '午后光影'], golden: ['◒', '黄昏 · 暖阳', '黄昏光影'], night: ['☾', '星夜 · 晴朗', '夜间光影'] };
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
